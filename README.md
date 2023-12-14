@@ -1,18 +1,18 @@
 # Ready-challenge
 
-* I've updated the Dockerfile with some improvements:
+I've updated the Dockerfile with some improvements:
 * Uses a specific Node.js version for consistency.
-* Separates copying of the package.json file and running npm install for better caching during the build process.
+* Separates copying of the package.json file and running npm install for better caching
 * Utilizes the smaller node:12.18.3-alpine image for the second stage.
 * Uses the COPY command instead of ADD for simplicity.
-* Adds a non-root user (node) for enhanced security.
+* Adds a non-root user for security.
 * Specifies the default command to start the Node.js application.
 
 ## Architectural Design/Assumptions:
-The web-based service is stateless, allowing horizontal scaling.
-AWS is used as the cloud provider.
-Amazon Elastic Container Service (ECS) is chosen for container orchestration.
-AWS Application Load Balancer (ALB) is used for load balancing and distribution of incoming traffic.
+This web service is stateless, allowing horizontal scaling.
+AWS is the cloud provider.
+Amazon ECS is chosen for container orchestration.
+AWS ALB is used for load balancing.
 
 ## Deployment Diagram
 ```
@@ -48,10 +48,10 @@ Hosts the web-based service with the core logic for the API layer.
 ### Notes:
 Security:
 Use Security Groups and Network ACLs to control traffic.
-Implement AWS Web Application Firewall (WAF) for additional protection against web exploits.
+Could implement AWS WAF for additional protection against exploits.
 
 Scaling:
-Utilize ECS Auto Scaling policies to dynamically adjust the number of tasks based on demand.
+Use ECS Auto Scaling policies to dynamically adjust the number of tasks based on demand.
 
 High Availability:
 Deploy ECS tasks across multiple Availability Zones for high availability.
