@@ -49,17 +49,23 @@ resource "aws_ecs_task_definition" "web" {
   ])
 }
 
-# ECS Service
+# ECS Service with Auto Scaling
 resource "aws_ecs_service" "web" {
   name            = "web-ecs-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.web.arn
   launch_type     = "FARGATE"
   desired_count   = 2
+  capacity_provider_strategy {
+    capacity_provider = "FARGATE_SPOT"
+    weight            = 1
+  }
 
   network_configuration {
     subnets         = ["subnet-abc", "subnet-xyz"]
-    security_groups = ["sg-foo"]
+    security_groups = ["sg-xxxx"]
   }
+
+  depends_on = [aws_ecs_task_definition.web]
 }
 
