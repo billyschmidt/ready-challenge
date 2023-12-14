@@ -49,22 +49,36 @@ resource "aws_ecs_task_definition" "web" {
   ])
 }
 
-# ECS Service with Auto Scaling
+# ECS Service with Rolling Deployment and Auto Scaling
 resource "aws_ecs_service" "web" {
   name            = "web-ecs-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.web.arn
   launch_type     = "FARGATE"
   desired_count   = 2
+  deployment_controller {
+    type = "ECS"
+  }
+
+  network_configuration {
+    subnets         = ["subnet-xxxxxxxxxxxxxxx", "subnet-yyyyyyyyyyyyyyy"]
+    security_groups = ["sg-xxxxxxxxxxxxxxxxx"]
+  }
+
+  # Enable Auto Scaling
+  enable_ecs_managed_tags = true
+  enable_execute_command  = true
+
   capacity_provider_strategy {
     capacity_provider = "FARGATE_SPOT"
     weight            = 1
   }
 
-  network_configuration {
-    subnets         = ["subnet-abc", "subnet-xyz"]
-    security_groups = ["sg-xxxx"]
-  }
+  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 50
+  health_check_grace_period_seconds  = 60
+  wait_for_steady_state              = true
+  force_new_deployment               = true
 
   depends_on = [aws_ecs_task_definition.web]
 }
